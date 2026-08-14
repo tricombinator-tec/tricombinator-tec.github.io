@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tricombinator — Reliability infrastructure for agentic AI</title>
+    <meta
+      name="description"
+      content="Tricombinator builds reliability infrastructure for agentic AI systems — an uncertainty-detection layer that helps agents escalate, defer, or ask for help instead of failing with confidence."
+    />
+    <link rel="canonical" href="https://tricombinator.com/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://tricombinator.com/" />
+    <meta property="og:site_name" content="Tricombinator" />
+    <meta property="og:title" content="Tricombinator — Reliability infrastructure for agentic AI" />
+    <meta
+      property="og:description"
+      content="An uncertainty-detection layer for AI agent systems. Safer, more reliable automation when a wrong answer is costlier than a slow one."
+    />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Tricombinator — Reliability infrastructure for agentic AI" />
+    <meta
+      name="twitter:description"
+      content="Reliability infrastructure for agentic AI systems. Helping agents recognize when they are likely to be wrong."
+    />
+
+    <meta name="theme-color" content="#101210" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <a class="wordmark" href="#top">Tricombinator</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#what-we-do">What we do</a>
+        <a href="#use-cases">Use cases</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <h1>Tricombinator</h1>
+        <p class="tagline">Building reliability infrastructure for agentic AI systems.</p>
+      </section>
+
+      <section class="section" id="what-we-do">
+        <p class="section-label">What we do</p>
+        <div class="prose">
+          <p>
+            AI agents are moving into production. When they fail, they often fail
+            quietly — and with confidence. A wrong action can look like a finished
+            one. That is a problem for any organization that cannot afford silent
+            mistakes.
+          </p>
+          <p>
+            Tricombinator builds an uncertainty-detection layer that sits on top
+            of AI agent systems. It helps those systems recognize when they are
+            likely to be wrong, so they can escalate, defer, or ask for help
+            instead of proceeding as if nothing is amiss.
+          </p>
+          <p>
+            The outcome is safer, more reliable automation: agents that keep
+            working when they should, and stop when they should not.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="use-cases">
+        <p class="section-label">Where it applies</p>
+        <h2>Use cases</h2>
+        <ul class="use-list">
+          <li>Financial compliance &amp; AML monitoring</li>
+          <li>Autonomous trading systems</li>
+          <li>High-stakes agentic workflows</li>
+          <li>Any system where a wrong answer is costlier than a slow one</li>
+        </ul>
+      </section>
+
+      <section class="section contact" id="contact">
+        <p class="section-label">Contact</p>
+        <div class="contact-grid">
+          <div>
+            <h2>Get in touch</h2>
+            <p class="lede">
+              If you are evaluating reliability for agentic systems, we would
+              like to hear from you.
+            </p>
+          </div>
+
+          <form id="contact-form">
+            <input type="hidden" name="subject" value="Inquiry from tricombinator.com" />
+            <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+            <label>
+              Name
+              <input type="text" name="name" autocomplete="name" required />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" autocomplete="email" required />
+            </label>
+            <label>
+              Company
+              <input type="text" name="company" autocomplete="organization" />
+            </label>
+            <label>
+              Message
+              <textarea name="message" rows="5" required></textarea>
+            </label>
+
+            <button type="submit" id="submit-btn">Send message</button>
+            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2026 Tricombinator</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
