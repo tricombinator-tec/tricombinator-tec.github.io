@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sentinel EOF — Cost-reduction cascade for agentic coding · Tricombinator</title>
+    <meta
+      name="description"
+      content="Sentinel EOF cuts frontier LLM spend for agentic coding without sacrificing accuracy, via calibrated escalate-on-fail rather than blanket downgrade. Cost ratio 0.54 vs. always-frontier at n=158."
+    />
+    <link rel="canonical" href="https://tricombinator.com/sentinel-eof.html" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://tricombinator.com/sentinel-eof.html" />
+    <meta property="og:site_name" content="Tricombinator" />
+    <meta property="og:title" content="Sentinel EOF — Cost-reduction cascade for agentic coding" />
+    <meta
+      property="og:description"
+      content="Calibrated escalate-on-fail for agentic coding pipelines. Cost ratio 0.54 vs. always-frontier at n=158, with no measured accuracy loss."
+    />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Sentinel EOF — Cost-reduction cascade for agentic coding" />
+    <meta
+      name="twitter:description"
+      content="Cuts frontier LLM spend for agentic coding without sacrificing accuracy, via calibrated escalation rather than blanket downgrade."
+    />
+
+    <meta name="theme-color" content="#101210" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <a class="wordmark" href="/">Tricombinator</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="/#what-we-do">What we do</a>
+        <a href="/sentinel-eof.html" aria-current="page">Sentinel EOF</a>
+        <a href="/#use-cases">Use cases</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero hero-product" id="top">
+        <p class="eyebrow">Product · Sentinel EOF</p>
+        <h1>Sentinel EOF</h1>
+        <p class="tagline tagline-wide">
+          Cuts frontier LLM spend for agentic coding without sacrificing accuracy,
+          via calibrated escalation rather than blanket downgrade.
+        </p>
+      </section>
+
+      <section class="section" id="problem">
+        <p class="section-label">The problem</p>
+        <div class="prose">
+          <p>
+            Agentic coding pipelines typically send every subtask to a frontier
+            model. That is simple to operate and expensive. A large share of those
+            subtasks are well-specified and would pass on a cheaper local model.
+          </p>
+          <p>
+            Routing everything to a cheap model is not a fix. Failures are
+            uneven: some easy tasks survive, others fail silently, and accuracy
+            drops in ways that are hard to predict or bound. The useful question
+            is not “cheap or frontier,” but which tasks need the expensive pass.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="how-it-works">
+        <p class="section-label">How it works</p>
+        <h2>Escalate-on-fail cascade</h2>
+        <ol class="step-list">
+          <li>
+            <strong>Cheap first pass.</strong>
+            A local coding model, served with Ollama by default, attempts the
+            subtask first. No frontier call is made unless this attempt is
+            flagged.
+          </li>
+          <li>
+            <strong>Calibrated failure signal.</strong>
+            A signal scored on a held-out calibration split estimates whether
+            that first pass is likely to fail. Thresholds are set on the
+            calibration split only; the evaluation split is not used to tune
+            them.
+          </li>
+          <li>
+            <strong>Frontier only when flagged.</strong>
+            Tasks the signal marks as high-risk escalate to a frontier model.
+            Everything else ships the local result. This is escalation, not a
+            global downgrade of model quality.
+          </li>
+        </ol>
+        <div class="prose">
+          <p>
+            The production architecture is a single-leg cascade: one cheap
+            attempt, then escalate or accept. That is the configuration that
+            survived pre-registered kill criteria. Broader ensemble-disagreement
+            variants were tested and did not replace it.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="results">
+        <p class="section-label">Validated results</p>
+        <h2>Audited evaluation, not a marketing estimate</h2>
+        <div class="stat-block">
+          <p class="stat-value">0.54</p>
+          <p class="stat-label">
+            Cost ratio vs. always-frontier · n = 158 · no accuracy loss
+          </p>
+        </div>
+        <div class="prose">
+          <p>
+            On the held-out evaluation set (n = 158), Sentinel EOF spent
+            approximately 0.54× the cost of sending every task to the frontier
+            model, with no accuracy loss relative to that always-frontier
+            baseline.
+          </p>
+          <p>
+            Kill criteria were written down before the run. Configurations that
+            failed those criteria were discarded, including a later
+            cheap-ensemble disagreement variant that did not beat this
+            single-leg cascade on cost-adjusted accuracy. The 0.54 figure is
+            the surviving production result, not a selected peak from an
+            unregistered sweep.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="architecture">
+        <p class="section-label">Where else it applies</p>
+        <h2>Domain-agnostic primitive</h2>
+        <div class="prose">
+          <p>
+            Escalate-on-fail is not a coding-only trick. The same primitive —
+            attempt under a cheaper or faster policy, then escalate when a
+            calibrated signal says the attempt is likely wrong — has been
+            validated in AML alert triage and in quantitative trading.
+          </p>
+          <p>
+            Agentic coding is the first product vertical, not the whole
+            architecture. Teams that already run high-stakes agent pipelines
+            can evaluate the same control in more than one domain.
+          </p>
+        </div>
+      </section>
+
+      <section class="section contact" id="contact">
+        <p class="section-label">Evaluate</p>
+        <div class="contact-grid">
+          <div>
+            <h2>Request a technical review</h2>
+            <p class="lede">
+              For engineering leads, AI infra teams, and accelerator or partner
+              reviewers who want the eval protocol, not a pitch deck. Say
+              whether you want a demo, a methods walkthrough, or both.
+            </p>
+          </div>
+
+          <form id="contact-form">
+            <input type="hidden" name="subject" value="Sentinel EOF — evaluation request from tricombinator.com" />
+            <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+            <label>
+              Name
+              <input type="text" name="name" autocomplete="name" required />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" autocomplete="email" required />
+            </label>
+            <label>
+              Company
+              <input type="text" name="company" autocomplete="organization" />
+            </label>
+            <label>
+              Message
+              <textarea name="message" rows="5" required></textarea>
+            </label>
+
+            <button type="submit" id="submit-btn">Request review</button>
+            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2026 Tricombinator</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

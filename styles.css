@@ -163,6 +163,71 @@ a:hover {
   color: #cfc8b8;
 }
 
+.tagline-wide {
+  max-width: 28ch;
+}
+
+.nav a[aria-current="page"] {
+  color: var(--ink);
+}
+
+.step-list {
+  list-style: none;
+  margin: 0 0 2rem;
+  padding: 0;
+  max-width: 40rem;
+  counter-reset: step;
+}
+
+.step-list li {
+  counter-increment: step;
+  padding: 1.15rem 0 1.15rem 2.75rem;
+  border-top: 1px solid var(--line);
+  position: relative;
+}
+
+.step-list li:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.step-list li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 1.25rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.step-list strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.stat-block {
+  margin: 0 0 2rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  max-width: 40rem;
+}
+
+.stat-value {
+  margin: 0 0 0.4rem;
+  font-family: var(--serif);
+  font-size: clamp(3.2rem, 8vw, 5.2rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.stat-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
 .section {
   max-width: var(--max);
   margin: 0 auto;
