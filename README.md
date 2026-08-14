@@ -16,25 +16,20 @@ Then visit `http://localhost:8080`.
 
 ## Contact form (Web3Forms)
 
-Submissions go to **business@tricombinator.com** once an access key is in place.
+The form is wired to Web3Forms in `script.js`. Submissions go to the inbox used to create the access key (`business@tricombinator.com`).
 
-1. Open [web3forms.com](https://web3forms.com) and create a free access key with `business@tricombinator.com`.
-2. Confirm the email they send you.
-3. In `script.js`, replace `YOUR_WEB3FORMS_ACCESS_KEY` with that key.
-
-Until the key is set, the form shows a fallback to email the same address.
+If you rotate the key later, replace `WEB3FORMS_ACCESS_KEY` in `script.js`.
 
 ## Deploy (GitHub Pages)
 
-This is the lowest-friction host for a static site already in git.
+This repo is `tricombinator-tec.github.io`. Pushing `main` publishes the site.
 
-1. Create a public GitHub repo (recommended name: `tricombinator-tec.github.io` so Pages turns on automatically).
-2. Push this folder to the `main` branch.
-3. In the repo: **Settings → Pages**
-   - Source: **Deploy from a branch**
-   - Branch: `main` / `/ (root)`
-   - Custom domain: `tricombinator.com`
-   - Enable **Enforce HTTPS** after DNS resolves (can take a few minutes to a few hours).
+In the repo: **Settings → Pages**
+
+- Source: **Deploy from a branch**
+- Branch: `main` / `/ (root)`
+- Custom domain: `tricombinator.com`
+- Enable **Enforce HTTPS** after DNS resolves (can take a few minutes to a few hours).
 
 A `CNAME` file is already in the repo (`tricombinator.com`).
 
