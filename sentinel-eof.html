@@ -104,10 +104,9 @@
         </ol>
         <div class="prose">
           <p>
-            The production architecture is a single-leg cascade: one cheap
-            attempt, then escalate or accept. That is the configuration that
-            survived pre-registered kill criteria. Broader ensemble-disagreement
-            variants were tested and did not replace it.
+            In production this is one cheap attempt, then escalate or accept.
+            Thresholds are locked from the calibration split before evaluation
+            is scored.
           </p>
         </div>
       </section>
@@ -129,11 +128,8 @@
             baseline.
           </p>
           <p>
-            Kill criteria were written down before the run. Configurations that
-            failed those criteria were discarded, including a later
-            cheap-ensemble disagreement variant that did not beat this
-            single-leg cascade on cost-adjusted accuracy. The 0.54 figure is
-            the surviving production result, not a selected peak from an
+            Kill criteria were written down before the run. The 0.54 figure is
+            the production result on that protocol, not a selected peak from an
             unregistered sweep.
           </p>
         </div>
