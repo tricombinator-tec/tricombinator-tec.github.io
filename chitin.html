@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chitin — AML alert suppression · Tricombinator</title>
+    <meta
+      name="description"
+      content="Chitin reduces AML alert fatigue by suppressing low-confidence false positives, without touching the volume or clarity of genuine risk alerts. Validated on the Elliptic benchmark."
+    />
+    <link rel="canonical" href="https://tricombinator.com/chitin.html" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://tricombinator.com/chitin.html" />
+    <meta property="og:site_name" content="Tricombinator" />
+    <meta property="og:title" content="Chitin — AML alert suppression" />
+    <meta
+      property="og:description"
+      content="Calibrated suppression of low-confidence AML false positives. Alert-volume reduction, not novel-typology detection. Validated on Elliptic."
+    />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Chitin — AML alert suppression" />
+    <meta
+      name="twitter:description"
+      content="Reduces AML alert fatigue by suppressing low-confidence false positives, without touching genuine risk alerts."
+    />
+
+    <meta name="theme-color" content="#101210" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <a class="wordmark" href="/"><img class="logo-mark" src="logo.svg" alt="" />Tricombinator</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="/#what-we-do">What we do</a>
+        <a href="/sentinel-eof.html">Sentinel EOF</a>
+        <a href="/chitin.html" aria-current="page">Chitin</a>
+        <a href="/#use-cases">Use cases</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero hero-product" id="top">
+        <img class="hero-logo" src="logo.svg" alt="" />
+        <p class="eyebrow">Product · Chitin</p>
+        <h1>Chitin</h1>
+        <p class="tagline tagline-wide">
+          Reduces AML alert fatigue by suppressing low-confidence false positives,
+          without touching the volume or clarity of genuine risk alerts.
+        </p>
+      </section>
+
+      <section class="section" id="problem">
+        <p class="section-label">The problem</p>
+        <div class="prose">
+          <p>
+            Transaction-monitoring systems flag a large number of events that
+            analysts must review. In practice, most of those alerts are false
+            positives. Teams spend their time clearing noise; genuine risk is
+            easier to miss when it sits in the same queue.
+          </p>
+          <p>
+            That is a documented operations problem, not a new discovery.
+            Adding another detector on top of the same rules usually adds more
+            alerts. The useful job is to take alerts a legacy system already
+            produced and decide which ones do not need a person.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="how-it-works">
+        <p class="section-label">How it works</p>
+        <h2>Calibrated suppression</h2>
+        <ol class="step-list">
+          <li>
+            <strong>Score every alert.</strong>
+            Each incoming alert receives a confidence score: how likely it is
+            to be a false positive under the current, known operating regime.
+          </li>
+          <li>
+            <strong>Lock the threshold on a calibration split.</strong>
+            The suppress / review cutoff is set on held-out calibration data
+            only. The evaluation split is not used to tune that threshold.
+          </li>
+          <li>
+            <strong>Suppress likely false positives only.</strong>
+            Alerts below the cutoff leave the analyst queue. Alerts that look
+            like genuine risk stay in the queue at the same volume and with
+            the same payload the source system already produced. Chitin does
+            not rewrite or dilute those cases.
+          </li>
+        </ol>
+        <div class="prose">
+          <p>
+            Chitin is an add-on in front of an existing monitoring stack, not
+            a replacement detector. Thresholds stay frozen from the
+            calibration split before any evaluation score is computed.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="scope">
+        <p class="section-label">Scope</p>
+        <h2>What this does — and what it does not</h2>
+        <div class="prose">
+          <p>
+            Current scope is <strong>alert-volume reduction</strong>: suppress
+            low-confidence false positives when conditions look like the
+            regime the system was calibrated on. That is the shipped product.
+          </p>
+          <p>
+            It is <strong>not</strong> a detector for novel or adversarial
+            laundering patterns, and it is not dual-regime detection. Finding
+            illicit activity the models have never seen — including after a
+            structural break in how laundering looks — is a separate, ongoing
+            research area. It is not a Chitin feature.
+          </p>
+          <p>
+            We state that here because a buyer should know the boundary
+            before a demo, not after an incident.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="results">
+        <p class="section-label">Validation</p>
+        <h2>Elliptic, under a chronological split</h2>
+        <div class="stat-block">
+          <p class="stat-value stat-value-text">Elliptic</p>
+          <p class="stat-label">
+            Public AML benchmark · held-out chronological evaluation ·
+            suppression of likely false positives
+          </p>
+        </div>
+        <div class="prose">
+          <p>
+            Chitin was evaluated on the Elliptic Bitcoin transaction dataset,
+            using a chronological train / evaluate split so later time steps
+            are not used to set thresholds. The claim under test is
+            alert-volume reduction on that benchmark, not detection of unseen
+            typologies after a regime break.
+          </p>
+          <p>
+            The scoring and threshold discipline is the same escalate-or-hold
+            primitive used in Tricombinator’s coding cascade (Sentinel EOF)
+            and in quantitative trading: act under a cheaper policy when the
+            calibrated signal says it is safe, and do not pretend competence
+            past that line.
+          </p>
+        </div>
+      </section>
+
+      <section class="section contact" id="contact">
+        <p class="section-label">Evaluate</p>
+        <div class="contact-grid">
+          <div>
+            <h2>Request a compliance review</h2>
+            <p class="lede">
+              For AML engineering, compliance, and accelerator or partner
+              reviewers. Say whether you want a demo against your alert
+              stream, a walkthrough of the eval protocol, or both.
+            </p>
+          </div>
+
+          <form id="contact-form">
+            <input type="hidden" name="subject" value="Chitin — evaluation request from tricombinator.com" />
+            <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+            <label>
+              Name
+              <input type="text" name="name" autocomplete="name" required />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" autocomplete="email" required />
+            </label>
+            <label>
+              Company
+              <input type="text" name="company" autocomplete="organization" />
+            </label>
+            <label>
+              Message
+              <textarea name="message" rows="5" required></textarea>
+            </label>
+
+            <button type="submit" id="submit-btn">Request review</button>
+            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2026 Tricombinator</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
