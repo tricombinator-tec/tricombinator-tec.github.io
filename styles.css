@@ -184,6 +184,47 @@ a:hover {
   max-width: 28ch;
 }
 
+.hero-actions {
+  margin: 1.75rem 0 0;
+}
+
+.btn-link {
+  display: inline-block;
+  padding: 0.7rem 1.2rem;
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.btn-link:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.install-block {
+  max-width: 40rem;
+  margin: 1.25rem 0 0;
+  padding: 1.1rem 1.15rem;
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  color: #d6d1c4;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  overflow-x: auto;
+}
+
+.install-block code {
+  font-family: ui-monospace, "Cascadia Code", "Segoe UI Mono", monospace;
+}
+
+.footnote {
+  margin-top: 1.5rem;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
 .nav a[aria-current="page"] {
   color: var(--ink);
 }

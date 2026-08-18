@@ -3,28 +3,28 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sentinel EOF — Cost-reduction cascade for agentic coding · Tricombinator</title>
+    <title>Sentinel Router — EOF-cold + cross-model rescue · Tricombinator</title>
     <meta
       name="description"
-      content="Sentinel EOF cuts frontier LLM spend for agentic coding without sacrificing accuracy, via calibrated escalate-on-fail rather than blanket downgrade. Cost ratio 0.54 vs. always-frontier at n=158."
+      content="Sentinel Router cuts frontier LLM spend for unit-tested agentic coding: cheap first pass, cross-model rescue on fail, frontier only on the original task (EOF-cold). Suite A: 155/158 vs 150/158 frontier, cost ratio 0.331."
     />
     <link rel="canonical" href="https://tricombinator.com/sentinel-eof.html" />
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://tricombinator.com/sentinel-eof.html" />
     <meta property="og:site_name" content="Tricombinator" />
-    <meta property="og:title" content="Sentinel EOF — Cost-reduction cascade for agentic coding" />
+    <meta property="og:title" content="Sentinel Router — EOF-cold + cross-model rescue" />
     <meta
       property="og:description"
-      content="Calibrated escalate-on-fail for agentic coding pipelines. Cost ratio 0.54 vs. always-frontier at n=158, with no measured accuracy loss."
+      content="Quality parity or better at 0.331× always-frontier cost on Suite A (n=158). Cross-model rescue recovered 28/55 stalled traces; 8/21 on Suite B."
     />
     <meta property="og:locale" content="en_US" />
 
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Sentinel EOF — Cost-reduction cascade for agentic coding" />
+    <meta name="twitter:title" content="Sentinel Router — EOF-cold + cross-model rescue" />
     <meta
       name="twitter:description"
-      content="Cuts frontier LLM spend for agentic coding without sacrificing accuracy, via calibrated escalation rather than blanket downgrade."
+      content="Cheap first, rescue on fail, frontier only on the original task. Suite A: 155/158 vs 150/158, cost ratio 0.331."
     />
 
     <meta name="theme-color" content="#101210" />
@@ -45,7 +45,7 @@
       <a class="wordmark" href="/"><img class="logo-mark" src="logo.svg" alt="" />Tricombinator</a>
       <nav class="nav" aria-label="Primary">
         <a href="/#what-we-do">What we do</a>
-        <a href="/sentinel-eof.html" aria-current="page">Sentinel EOF</a>
+        <a href="/sentinel-eof.html" aria-current="page">Sentinel Router</a>
         <a href="/chitin.html">Chitin</a>
         <a href="/#use-cases">Use cases</a>
         <a href="#contact">Contact</a>
@@ -55,11 +55,15 @@
     <main id="main">
       <section class="hero hero-product" id="top">
         <img class="hero-logo" src="logo.svg" alt="" />
-        <p class="eyebrow">Product · Sentinel EOF</p>
-        <h1>Sentinel EOF</h1>
+        <p class="eyebrow">Product · Sentinel Router v0.2</p>
+        <h1>Sentinel Router</h1>
         <p class="tagline tagline-wide">
-          Cuts frontier LLM spend for agentic coding without sacrificing accuracy,
-          via calibrated escalation rather than blanket downgrade.
+          Cuts frontier LLM spend for unit-tested agentic coding without
+          sacrificing quality — cheap first, cross-model rescue on fail,
+          frontier only on the original task (EOF-cold).
+        </p>
+        <p class="hero-actions">
+          <a class="btn-link" href="https://github.com/tricombinator-tec/Sentinel_Router_Alpha">View on GitHub</a>
         </p>
       </section>
 
@@ -82,33 +86,31 @@
 
       <section class="section" id="how-it-works">
         <p class="section-label">How it works</p>
-        <h2>Escalate-on-fail cascade</h2>
+        <h2>EOF-cold + cross-model rescue</h2>
         <ol class="step-list">
           <li>
             <strong>Cheap first pass.</strong>
-            A local coding model, served with Ollama by default, attempts the
-            subtask first. No frontier call is made unless this attempt is
-            flagged.
+            A local coding model, served with Ollama by default, writes the
+            solution. Unit tests run. No frontier call is made yet.
           </li>
           <li>
-            <strong>Calibrated failure signal.</strong>
-            A signal scored on a held-out calibration split estimates whether
-            that first pass is likely to fail. Thresholds are set on the
-            calibration split only; the evaluation split is not used to tune
-            them.
+            <strong>Same-model repair, then a different cheap model.</strong>
+            On fail, the same model gets one repair pass (failed code, error,
+            and tests). If that still fails, a second cheap model gets the
+            same repair template.
           </li>
           <li>
-            <strong>Frontier only when flagged.</strong>
-            Tasks the signal marks as high-risk escalate to a frontier model.
-            Everything else ships the local result. This is escalation, not a
-            global downgrade of model quality.
+            <strong>Frontier only on the original task (EOF-cold).</strong>
+            If rescue still fails, a frontier model sees the original task
+            only — not the failed attempts. Same-model continuation on leftover
+            budget is a measured control, not the product path.
           </li>
         </ol>
         <div class="prose">
           <p>
-            In production this is one cheap attempt, then escalate or accept.
-            Thresholds are locked from the calibration split before evaluation
-            is scored.
+            That flow is what v0.2 shipped. Escalation is driven by unit-test
+            fail after a cheap attempt, not by a pre-generation difficulty
+            score.
           </p>
         </div>
       </section>
@@ -117,40 +119,65 @@
         <p class="section-label">Validated results</p>
         <h2>Audited evaluation, not a marketing estimate</h2>
         <div class="stat-block">
-          <p class="stat-value">0.54</p>
+          <p class="stat-value">0.331</p>
           <p class="stat-label">
-            Cost ratio vs. always-frontier · n = 158 · no accuracy loss
+            Cost ratio vs. always-frontier · Suite A n = 158 · 155/158 vs 150/158
           </p>
         </div>
         <div class="prose">
           <p>
-            On the held-out evaluation set (n = 158), Sentinel EOF spent
-            approximately 0.54× the cost of sending every task to the frontier
-            model, with no accuracy loss relative to that always-frontier
-            baseline.
+            Suite A (held-out commercial-style coding tasks, n = 158, paired
+            against always-frontier): Sentinel Router passed <strong>155/158</strong>
+            vs <strong>150/158</strong> for frontier-only. Cost was
+            $0.094 / $0.283 = <strong>0.331</strong>. Pre-registered quality
+            and cost gates both passed.
           </p>
           <p>
-            Kill criteria were written down before the run. The 0.54 figure is
-            the production result on that protocol, not a selected peak from an
-            unregistered sweep.
+            On Suite A traces that stalled past cheap self-repair, cross-model
+            rescue recovered <strong>28/55</strong> vs <strong>2/55</strong> for
+            same-model continuation. Suite B (HumanEval hard-fail slice, n = 21):
+            rescue recovered <strong>8/21</strong> vs <strong>0/21</strong>
+            continuation.
+          </p>
+          <p class="footnote">
+            v0.1 on the same n = 158 catalog (EOF-cold, no rescue) cleared
+            quality and cost at 151/158 vs 150/158 and a cost ratio of 0.54.
+            Rescue sits between “cheap gave up” and “call frontier”; it does
+            not replace EOF-cold.
           </p>
         </div>
       </section>
 
-      <section class="section" id="architecture">
-        <p class="section-label">Where else it applies</p>
-        <h2>Domain-agnostic primitive</h2>
+      <section class="section" id="install">
+        <p class="section-label">Install</p>
+        <h2>Hand this to a coding agent</h2>
         <div class="prose">
           <p>
-            Escalate-on-fail is not a coding-only trick. The same primitive —
-            attempt under a cheaper or faster policy, then escalate when a
-            calibrated signal says the attempt is likely wrong — has been
-            validated in <a href="/chitin.html">AML alert triage</a> and in quantitative trading.
+            MIT-licensed reference implementation. The repo’s
+            <a href="https://github.com/tricombinator-tec/Sentinel_Router_Alpha/blob/main/AGENTS.md">AGENTS.md</a>
+            and <code>scripts/install.py</code> carry the setup steps.
+          </p>
+        </div>
+        <pre class="install-block"><code>Install Sentinel Router by cloning
+https://github.com/tricombinator-tec/Sentinel_Router_Alpha
+and following the setup steps in its AGENTS.md file.</code></pre>
+      </section>
+
+      <section class="section" id="architecture">
+        <p class="section-label">Where else it applies</p>
+        <h2>Same company, separate products</h2>
+        <div class="prose">
+          <p>
+            Escalate-on-fail is not a coding-only idea. Related controls —
+            act under a cheaper policy, then escalate when a cheap attempt
+            has failed — have been validated in
+            <a href="/chitin.html">AML alert triage</a> and in quantitative
+            trading.
           </p>
           <p>
-            Agentic coding is the first product vertical, not the whole
-            architecture. Teams that already run high-stakes agent pipelines
-            can evaluate the same control in more than one domain.
+            The public repo is the coding cascade only. AML (Chitin) and
+            trading are separate products; they are not in
+            Sentinel_Router_Alpha.
           </p>
         </div>
       </section>
@@ -162,13 +189,14 @@
             <h2>Request a technical review</h2>
             <p class="lede">
               For engineering leads, AI infra teams, and accelerator or partner
-              reviewers who want the eval protocol, not a pitch deck. Say
-              whether you want a demo, a methods walkthrough, or both.
+              reviewers who want the eval protocol, not a pitch deck. Or clone
+              the repo and follow
+              <a href="https://github.com/tricombinator-tec/Sentinel_Router_Alpha/blob/main/AGENTS.md">AGENTS.md</a>.
             </p>
           </div>
 
           <form id="contact-form">
-            <input type="hidden" name="subject" value="Sentinel EOF — evaluation request from tricombinator.com" />
+            <input type="hidden" name="subject" value="Sentinel Router — evaluation request from tricombinator.com" />
             <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
             <label>
