@@ -203,20 +203,40 @@ a:hover {
   color: var(--bg);
 }
 
-.install-block {
+.install-wrap {
+  position: relative;
   max-width: 40rem;
-  margin: 1.25rem 0 0;
-  padding: 1.1rem 1.15rem;
+  margin: 1.75rem 0 0;
+}
+
+.install-block {
+  margin: 0;
+  padding: 1.1rem 5.5rem 1.1rem 1.15rem;
   border: 1px solid var(--line);
   background: var(--bg-elev);
   color: #d6d1c4;
-  font-size: 0.92rem;
+  font-family: ui-monospace, "Cascadia Code", "Segoe UI Mono", monospace;
+  font-size: 0.88rem;
   line-height: 1.55;
-  overflow-x: auto;
+  white-space: pre-wrap;
 }
 
-.install-block code {
-  font-family: ui-monospace, "Cascadia Code", "Segoe UI Mono", monospace;
+.copy-btn {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--bg);
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  border-color: var(--accent);
 }
 
 .footnote {

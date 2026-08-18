@@ -1,5 +1,22 @@
 const WEB3FORMS_ACCESS_KEY = "2a18a0a9-0fba-4fbd-9d1a-6eef2d2d5318";
 
+const copyBtn = document.getElementById("copy-install");
+const installText = document.getElementById("install-text");
+if (copyBtn && installText) {
+  copyBtn.addEventListener("click", async () => {
+    const text = installText.textContent.trim();
+    try {
+      await navigator.clipboard.writeText(text);
+      copyBtn.textContent = "Copied";
+    } catch {
+      copyBtn.textContent = "Copy failed";
+    }
+    setTimeout(() => {
+      copyBtn.textContent = "Copy";
+    }, 1600);
+  });
+}
+
 const form = document.getElementById("contact-form");
 const statusEl = document.getElementById("form-status");
 const submitBtn = document.getElementById("submit-btn");
@@ -9,7 +26,7 @@ function setStatus(message, kind) {
   statusEl.className = "form-status" + (kind ? " " + kind : "");
 }
 
-form.addEventListener("submit", async (event) => {
+if (form) form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   if (!WEB3FORMS_ACCESS_KEY || WEB3FORMS_ACCESS_KEY.startsWith("YOUR_")) {
