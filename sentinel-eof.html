@@ -161,7 +161,7 @@ and following the setup steps in its AGENTS.md file.</pre>
           <p>
             Sentinel Router has an explicit <code>--mode</code> switch, the
             same way you would pick an effort level on other agent tools.
-            This is a selector, not extra validated behavior.
+            Only <strong>direct</strong> is behind the Suite A/B gates above.
           </p>
         </div>
         <ul class="use-list">
@@ -171,26 +171,27 @@ and following the setup steps in its AGENTS.md file.</pre>
             above.
           </li>
           <li>
-            <strong>planned</strong> — Experimental. Intended to run a
-            frontier planning pass before the cascade, for underspecified
-            tasks. Not implemented yet — currently a stub that declines to
-            run.
+            <strong>planned</strong> — Implemented, tested, did not beat
+            direct. On a held-out underspecified set (n = 21), planned passed
+            6/21 vs 9/21 for direct on the same prompts, at 3.44× the cost.
+            It is not a validated product path.
+            <a href="https://github.com/tricombinator-tec/Sentinel_Router_Alpha/blob/main/RESEARCH.md#5-frontier-decompose-then-independent-cheap-subtasks-planned">RESEARCH.md</a>
           </li>
           <li>
-            <strong>handback</strong> — Experimental. Intended to let an
-            orchestrating agent receive escalation directly instead of the
-            router calling a frontier API itself. Not implemented yet —
-            currently a stub that declines to run.
+            <strong>handback</strong> — Implemented. Escalation returns a JSON
+            payload to the calling agent instead of the router calling a
+            frontier API. Correctness-gated (payload complete, frontier never
+            called). No Suite A/B quality or cost numbers.
+            <a href="https://github.com/tricombinator-tec/Sentinel_Router_Alpha/blob/main/RESEARCH.md#operating-modes-v02-switch">RESEARCH.md</a>
           </li>
         </ul>
         <pre class="install-block"><code>sentinel-router modes
 sentinel-router run --mode direct</code></pre>
         <div class="prose">
           <p>
-            Only <strong>direct</strong> is behind the Suite A/B gates above.
-            See
-            <a href="https://github.com/tricombinator-tec/Sentinel_Router_Alpha/blob/main/RESEARCH.md#operating-modes-v02-switch">RESEARCH.md</a>
-            for what planned and handback are meant to become.
+            Do not cite the Suite A/B figures for planned or handback.
+            Planned has its own gate; handback is an integration mode, not a
+            quality/cost result.
           </p>
         </div>
       </section>
