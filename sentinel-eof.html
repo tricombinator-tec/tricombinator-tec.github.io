@@ -154,6 +154,47 @@ and following the setup steps in its AGENTS.md file.</pre>
         </div>
       </section>
 
+      <section class="section" id="modes">
+        <p class="section-label">Switch</p>
+        <h2>Operating modes</h2>
+        <div class="prose">
+          <p>
+            Sentinel Router has an explicit <code>--mode</code> switch, the
+            same way you would pick an effort level on other agent tools.
+            This is a selector, not extra validated behavior.
+          </p>
+        </div>
+        <ul class="use-list">
+          <li>
+            <strong>direct</strong> — Validated; the default. EOF-cold +
+            cross-model rescue. This is the architecture behind the numbers
+            above.
+          </li>
+          <li>
+            <strong>planned</strong> — Experimental. Intended to run a
+            frontier planning pass before the cascade, for underspecified
+            tasks. Not implemented yet — currently a stub that declines to
+            run.
+          </li>
+          <li>
+            <strong>handback</strong> — Experimental. Intended to let an
+            orchestrating agent receive escalation directly instead of the
+            router calling a frontier API itself. Not implemented yet —
+            currently a stub that declines to run.
+          </li>
+        </ul>
+        <pre class="install-block"><code>sentinel-router modes
+sentinel-router run --mode direct</code></pre>
+        <div class="prose">
+          <p>
+            Only <strong>direct</strong> is behind the Suite A/B gates above.
+            See
+            <a href="https://github.com/tricombinator-tec/Sentinel_Router_Alpha/blob/main/RESEARCH.md#operating-modes-v02-switch">RESEARCH.md</a>
+            for what planned and handback are meant to become.
+          </p>
+        </div>
+      </section>
+
       <section class="section" id="architecture">
         <p class="section-label">Where else it applies</p>
         <h2>Same company, separate products</h2>
