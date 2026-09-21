@@ -458,6 +458,11 @@ a:hover {
 }
 
 .site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem 2rem;
   max-width: var(--max);
   margin: 0 auto;
   padding: 2.25rem 1.5rem 3rem;
@@ -467,6 +472,17 @@ a:hover {
 
 .site-footer p {
   margin: 0;
+}
+
+.inception-badge {
+  display: block;
+  line-height: 0;
+}
+
+.inception-badge img {
+  display: block;
+  height: 3.5rem;
+  width: auto;
 }
 
 @media (min-width: 800px) {
@@ -490,6 +506,12 @@ a:hover {
 
   .section {
     padding: 3.5rem 1.25rem;
+  }
+
+  .site-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem 1.25rem 2.5rem;
   }
 }
 
