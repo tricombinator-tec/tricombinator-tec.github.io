@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- build 4a22d99-fix2 timeline-path-space -->
+<!-- build counts-v3 timeline clarity -->
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Historical forecast replay (VALIDATION 2019–2020) — Tricombinator</title>
@@ -222,7 +222,7 @@ a { color:var(--accent); }
         if (rec && rec.flag) {
           const x0 = x(i) - (innerW / Math.max(n - 1, 1)) / 2;
           const w = innerW / Math.max(n - 1, 1);
-          flagRects += `<rect x="${x0}" y="${padT}" width="${Math.max(w,1)}" height="${innerH}" fill="#5b8def" opacity="0.22"/>`;
+          flagRects += `<rect x="${x0}" y="${padT}" width="${Math.max(w,1.5)}" height="${innerH}" fill="#5b8def" opacity="0.35"/>`;
         }
       }
     }
@@ -246,7 +246,7 @@ a { color:var(--accent); }
       for (let i = 0; i < n; i++) {
         const rec = wh[i].rec;
         if (rec && rec.spike && rec.y != null) {
-          spikes += `<circle cx="${x(i).toFixed(2)}" cy="${y(rec.y).toFixed(2)}" r="3.2" fill="#e0a800" stroke="#1e1e1e" stroke-width="0.8"/>`;
+          spikes += `<circle cx="${x(i).toFixed(2)}" cy="${y(rec.y).toFixed(2)}" r="4.5" fill="#e0a800" stroke="#ffffff" stroke-width="1.2"/>`;
         }
       }
     }
@@ -288,6 +288,23 @@ a { color:var(--accent); }
     }
     document.getElementById("timelineTable").innerHTML =
       `<thead><tr><th>Local time</th><th>y</th><th>f</th><th>ae</th><th>flag</th><th>spike</th></tr></thead><tbody>${rows.join("")}</tbody>`;
+
+    // Explicit counts so sparse windows are not mistaken for render bugs
+    let nFlag = 0, nSpike = 0, nHit = 0;
+    for (const { rec } of wh) {
+      if (!rec) continue;
+      nHit++;
+      if (rec.flag) nFlag++;
+      if (rec.spike) nSpike++;
+    }
+    let countEl = document.getElementById("timelineCounts");
+    if (!countEl) {
+      countEl = document.createElement("p");
+      countEl.id = "timelineCounts";
+      countEl.className = "meta-line";
+      document.getElementById("timeline").after(countEl);
+    }
+    countEl.textContent = `This window: ${nHit} evaluable hours · ${nFlag} flagged (A2 ≥ τ) · ${nSpike} spike hours. Counts come from the VALIDATION export; a quiet week can have few or zero spikes/flags.`;
   }
 
   function drawHeatmap(wh) {
