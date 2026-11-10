@@ -234,7 +234,7 @@ a { color:var(--accent); }
         const v = rec ? rec[key] : null;
         if (v == null) { pen = false; continue; }
         const cmd = pen ? "L" : "M";
-        d += `${cmd}${x(i).toFixed(2)}${y(v).toFixed(2)} `;
+        d += `${cmd}${x(i).toFixed(2)} ${y(v).toFixed(2)} `;
         pen = true;
       }
       return d;
