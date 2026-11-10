@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- build counts-v3 timeline clarity -->
+<!-- build table-scroll-v4 -->
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Historical forecast replay (VALIDATION 2019–2020) — Tricombinator</title>
@@ -43,14 +43,23 @@ h2 { font-size:0.95rem; font-weight:400; letter-spacing:0.1em; text-transform:up
 svg { display:block; width:100%; height:auto; max-height:340px; }
 .legend { display:flex; flex-wrap:wrap; gap:0.75rem 1.25rem; font-size:11px; color:var(--muted); margin:0.5rem 0 0; }
 .legend span i { display:inline-block; width:12px; height:12px; margin-right:0.35rem; vertical-align:middle; }
+.table-wrap {
+  width:100%; max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch;
+  margin-top:0.75rem; border:1px solid var(--line);
+}
 table.fallback {
-  width:100%; border-collapse:collapse; font-size:11px; margin-top:0.75rem;
+  width:max-content; max-width:none; border-collapse:collapse; font-size:11px; margin:0;
 }
 table.fallback th, table.fallback td {
   border:1px solid var(--line); padding:0.25rem 0.4rem; text-align:right;
+  white-space:nowrap;
 }
 table.fallback th { color:var(--accent); font-weight:400; text-align:left; }
-.heat-wrap { overflow-x:auto; }
+.heat-wrap { overflow-x:auto; max-width:100%; }
+#heatmap svg, #timeline svg, #calib svg { max-width:100%; height:auto; }
+.panel { overflow-x:hidden; max-width:100%; }
+main, header, footer { max-width:1100px; width:100%; box-sizing:border-box; }
+body { overflow-x:hidden; }
 #tooltip {
   position:fixed; pointer-events:none; z-index:20; display:none;
   background:#1e1e1e; color:#fff; border:1px solid var(--accent);
@@ -90,34 +99,34 @@ a { color:var(--accent); }
       <span><i style="background:var(--flag);opacity:0.45"></i>Flagged</span>
       <span><i style="background:var(--spike)"></i>Spike</span>
     </div>
-    <table class="fallback" id="timelineTable" aria-label="Timeline data table"></table>
+    <div class="table-wrap"><table class="fallback" id="timelineTable" aria-label="Timeline data table"></table></div>
   </section>
 
   <section class="panel" aria-labelledby="p2">
     <h2 id="p2">2 · Error heatmap</h2>
     <p class="meta-line">Absolute error by local day (rows) × hour (columns). Fixed color scale across both windows. Colorblind-safe sequential (yellow–orange–purple).</p>
     <div class="heat-wrap" id="heatmap"></div>
-    <table class="fallback" id="heatTable" aria-label="Error heatmap data table"></table>
+    <div class="table-wrap"><table class="fallback" id="heatTable" aria-label="Error heatmap data table"></table></div>
   </section>
 
   <section class="panel" aria-labelledby="p3">
     <h2 id="p3">3 · Spike view</h2>
     <p class="meta-line">Spike hours in the selected window — counts only, no ranking by profit.</p>
     <div id="spikeSummary" class="meta-line"></div>
-    <table class="fallback" id="spikeTable" aria-label="Spike hours table">
+    <div class="table-wrap"><table class="fallback" id="spikeTable" aria-label="Spike hours table">
       <thead><tr><th>Local time</th><th>y</th><th>f</th><th>ae</th><th>flag</th></tr></thead>
       <tbody></tbody>
-    </table>
+    </table></div>
   </section>
 
   <section class="panel" aria-labelledby="p4">
     <h2 id="p4">4 · Calibration (full VALIDATION)</h2>
     <p class="meta-line">Mean absolute error for flagged vs unflagged hours over all VALIDATION evaluable hours, plus Build 3 top/bottom disagreement-decile MAE. Numbers from the Build 3 analysis.</p>
     <div id="calib"></div>
-    <table class="fallback" id="calibTable" aria-label="Calibration table">
+    <div class="table-wrap"><table class="fallback" id="calibTable" aria-label="Calibration table">
       <thead><tr><th>Group</th><th>MAE (EUR/MWh)</th><th>n</th></tr></thead>
       <tbody></tbody>
-    </table>
+    </table></div>
   </section>
 </main>
 <footer>
