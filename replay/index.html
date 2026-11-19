@@ -81,7 +81,7 @@ a { color:var(--accent); }
   <p class="banner">Historical replay of frozen models. Illustrative. Not a live track record.</p>
   <p class="banner">Out-of-sample windows were opened once, after the model freeze was committed. Not a performance guarantee.</p>
   <p class="banner">Contains no trading results.</p>
-  <p class="meta-line">Spike = price above 100 EUR/MWh. Flag = top-decile tree disagreement (GBT vs RF). Pick a market and a model, then a week to zoom into.</p>
+  <p class="meta-line">Spike = price above 100 EUR/MWh. Calibration flag = top-decile tree disagreement (GBT vs RF). Pick a market and a model, then a week to zoom into. Summary-only markets show MAE only (no per-hour charts).</p>
 </header>
 <main>
   <div id="labelsBox">
@@ -94,7 +94,7 @@ a { color:var(--accent); }
   <div class="controls" role="group" aria-label="Replay controls">
     <label>Market <select id="marketSel" aria-label="Select market"></select></label>
     <label>Model <select id="modelSel" aria-label="Select model"></select></label>
-    <label><input type="checkbox" id="togFlag" checked/> Disagreement flags</label>
+    <label><input type="checkbox" id="togFlag" checked/> Calibration flags</label>
     <label><input type="checkbox" id="togSpike" checked/> Spike markers</label>
   </div>
   <p id="marketMeta" class="meta-line"></p>
@@ -116,7 +116,7 @@ a { color:var(--accent); }
     <div class="legend">
       <span><i style="background:#fff"></i>Realized</span>
       <span><i style="background:var(--accent)"></i>Forecast (selected model)</span>
-      <span><i style="background:var(--flag);opacity:0.45"></i>Flagged</span>
+      <span><i style="background:var(--flag);opacity:0.45"></i>Calibration flag</span>
       <span><i style="background:var(--spike)"></i>Spike</span>
     </div>
     <div class="table-wrap"><table class="fallback" id="timelineTable" aria-label="Timeline data table"></table></div>
@@ -131,11 +131,12 @@ a { color:var(--accent); }
 
   <section class="panel" aria-labelledby="p3">
     <h2 id="p3">3 · Spike view</h2>
-    <p class="meta-line">Spike hours in the zoom week — counts only, no ranking by profit.</p>
+    <p class="meta-line">Spike hours (price &gt; 100 EUR/MWh) in the zoom week — counts only, no ranking by profit.</p>
     <div id="spikeSummary" class="meta-line"></div>
+    <p id="spikeActions" class="meta-line"></p>
     <div class="table-wrap"><table class="fallback" id="spikeTable" aria-label="Spike hours table">
       <thead><tr><th>Local time</th><th>y</th><th>f</th><th>ae</th><th>flag</th></tr></thead>
-      <tbody></tbody>
+      <tbody><tr><td colspan="5">Loading…</td></tr></tbody>
     </table></div>
   </section>
 </main>
@@ -237,7 +238,8 @@ a { color:var(--accent); }
   function populateMarkets() {
     marketSel.innerHTML = marketKeys.map(k => {
       const m = DATA.markets[k];
-      return `<option value="${k}">${m.name} — ${m.label}</option>`;
+      const kind = m.per_hour ? "charts" : "summary only";
+      return `<option value="${k}">${m.name} — ${m.label} · ${kind}</option>`;
     }).join("");
   }
 
@@ -378,7 +380,7 @@ a { color:var(--accent); }
       document.getElementById("timeline").after(countEl);
     }
     countEl.textContent =
-      `This window: ${nHit} evaluable hours · ${nFlag} flagged (top-decile disagreement) · ` +
+      `This window: ${nHit} evaluable hours · ${nFlag} calibration flags (top-decile) · ` +
       `${nSpike} spike hours (price > 100). A quiet week can have few or zero spikes/flags.`;
   }
 
@@ -439,27 +441,69 @@ a { color:var(--accent); }
     document.getElementById("heatTable").innerHTML = `<thead>${th}</thead><tbody>${tableRows}</tbody>`;
   }
 
-  function renderSpikes(wh, tz) {
+  function firstSpikeWeek(hours, weeks) {
+    for (let i = 0; i < weeks.length; i++) {
+      const wk = weeks[i];
+      if (hours.some(r => r && r.sp && (() => {
+        const t = parseUTC(r.t).getTime();
+        return t >= wk.start && t <= wk.end;
+      })())) return i;
+    }
+    return -1;
+  }
+
+  function renderSpikes(wh, tz, hours, weeks) {
     const spikes = wh.filter(r => r && r.sp);
     const flagged = spikes.filter(s => s.fl).length;
+    const marketSpikes = hours.filter(r => r && r.sp).length;
+    const actions = document.getElementById("spikeActions");
+    if (!spikes.length) {
+      document.getElementById("spikeSummary").textContent =
+        marketSpikes
+          ? `No spike hours in this zoom week (price > 100). This market has ${marketSpikes} spike hour${marketSpikes === 1 ? "" : "s"} overall.`
+          : "No spike hours in this zoom week (price > 100). This market has none overall.";
+      document.querySelector("#spikeTable tbody").innerHTML =
+        `<tr><td colspan="5">No spike hours in this window.</td></tr>`;
+      const wi = firstSpikeWeek(hours, weeks);
+      if (wi >= 0) {
+        actions.innerHTML =
+          `<button type="button" id="jumpSpike">Jump to first spike week (w${wi + 1})</button>`;
+        document.getElementById("jumpSpike").addEventListener("click", () => {
+          curWeek = wi; render();
+        });
+      } else {
+        actions.textContent = "";
+      }
+      return;
+    }
     document.getElementById("spikeSummary").textContent =
-      `Spike hours in window: ${spikes.length}. Flag raised on ${flagged} of them.`;
+      `Spike hours in this zoom week: ${spikes.length}. Calibration flag on ${flagged} of them. Market total: ${marketSpikes}.`;
+    actions.textContent = "";
     const body = spikes.map(s =>
-      `<tr><td>${fmtLocal(parseUTC(s.t), tz)}</td><td>${s.y}</td><td>${s.f}</td><td>${s.ae}</td><td>${s.fl ? "Y" : ""}</td></tr>`
+      `<tr><td>${fmtLocal(parseUTC(s.t), tz)}</td>` +
+      `<td>${s.y != null ? s.y : "—"}</td>` +
+      `<td>${s.f != null ? s.f : "—"}</td>` +
+      `<td>${s.ae != null ? s.ae : "—"}</td>` +
+      `<td>${s.fl ? "Y" : ""}</td></tr>`
     ).join("");
-    document.querySelector("#spikeTable tbody").innerHTML =
-      body || `<tr><td colspan="5">No spike hours in this window.</td></tr>`;
+    document.querySelector("#spikeTable tbody").innerHTML = body;
   }
 
   function clearPerHour() {
     document.getElementById("winBtns").innerHTML = "";
     document.getElementById("windowMeta").textContent =
-      "Summary-only window: per-hour replay was not stored for this test. See the MAE table above.";
-    ["timeline", "heatmap"].forEach(id => document.getElementById(id).innerHTML = "");
+      "Summary-only window: per-hour charts were not stored for this test. MAE table above is the full result.";
+    const msg =
+      `<p class="meta-line" style="margin:0.75rem 0">No per-hour series for this window — charts apply only to markets labeled “charts” in the market list.</p>`;
+    document.getElementById("timeline").innerHTML = msg;
+    document.getElementById("heatmap").innerHTML = msg;
     document.getElementById("timelineTable").innerHTML = "";
     document.getElementById("heatTable").innerHTML = "";
-    document.querySelector("#spikeTable tbody").innerHTML = "";
-    document.getElementById("spikeSummary").textContent = "";
+    document.getElementById("spikeSummary").textContent =
+      "No per-hour spike log for this summary-only window.";
+    document.getElementById("spikeActions").textContent = "";
+    document.querySelector("#spikeTable tbody").innerHTML =
+      `<tr><td colspan="5">No per-hour spike data for this window.</td></tr>`;
     const c = document.getElementById("timelineCounts");
     if (c) c.textContent = "";
   }
@@ -471,8 +515,22 @@ a { color:var(--accent); }
     if (!m.per_hour) { clearPerHour(); return; }
     const hours = marketHours();
     const weeks = weekWindows(hours);
-    renderWinButtons(weeks);
     if (curWeek >= weeks.length) curWeek = 0;
+    // Skip empty weeks (DST gaps / sparse series) so charts are not blank
+    if (weeks.length) {
+      let guard = 0;
+      while (guard < weeks.length) {
+        const wk0 = weeks[curWeek];
+        const n = hours.filter(r => {
+          const t = parseUTC(r.t).getTime();
+          return t >= wk0.start && t <= wk0.end;
+        }).length;
+        if (n > 0) break;
+        curWeek = (curWeek + 1) % weeks.length;
+        guard++;
+      }
+    }
+    renderWinButtons(weeks);
     if (!weeks.length) { clearPerHour(); return; }
     const wk = weeks[curWeek];
     const wh = hours.filter(r => {
@@ -480,7 +538,17 @@ a { color:var(--accent); }
       return t >= wk.start && t <= wk.end;
     });
     document.getElementById("windowMeta").textContent =
-      `Zoom week ${curWeek + 1}/${weeks.length} · model ${curModel} · ${wh.length} hours in view.`;
+      `Zoom week ${curWeek + 1}/${weeks.length} · model ${curModel} · ${wh.length} hours in view` +
+      (m.per_hour ? "" : "");
+    if (!wh.length) {
+      document.getElementById("timeline").innerHTML =
+        `<p class="meta-line">No hours in this week for the selected model.</p>`;
+      document.getElementById("heatmap").innerHTML = "";
+      document.getElementById("timelineTable").innerHTML = "";
+      document.getElementById("heatTable").innerHTML = "";
+      renderSpikes([], m.tz, hours, weeks);
+      return;
+    }
     let mx = 0;
     for (const r of hours) if (r && r.ae != null) mx = Math.max(mx, r.ae);
     const aeExt = { vmin: 0, vmax: Math.max(mx, 1) };
@@ -488,7 +556,7 @@ a { color:var(--accent); }
     const showSpike = document.getElementById("togSpike").checked;
     renderTimeline(wh, m.tz, showFlag, showSpike);
     renderHeatmap(wh, m.tz, aeExt);
-    renderSpikes(wh, m.tz);
+    renderSpikes(wh, m.tz, hours, weeks);
   }
 
   function boot(data) {
@@ -517,7 +585,7 @@ a { color:var(--accent); }
   document.getElementById("togSpike").addEventListener("change", render);
 
   // Prefer same-dir data_v5.json (cache-busted). Fall back to embedded payload if present.
-  const qs = "v=5b";
+  const qs = "v=5c";
   fetch("data_v5.json?" + qs)
     .then(r => {
       if (!r.ok) throw new Error("HTTP " + r.status);
